@@ -1,4 +1,4 @@
-# Sistema de Information Retrieval - RepositoriUM
+![alt text](public/banner.png)
 
 Este projeto implementa um sistema completo de Information Retrieval baseado no RepositoriUM da Universidade do Minho. Recorre a sentence transformers para calcular similaridades semânticas entre documentos.
 
