@@ -5,7 +5,7 @@ Este projeto implementa um sistema completo de Information Retrieval baseado no 
 ## 📋 Estrutura do Projeto
 
 ```
-repositorium-ir-system/
+src/
 ├── config.py                 # Configurações do projeto
 ├── utils.py                  # Funções utilitárias
 ├── data_extraction.py        # Extração de dados do RepositoriUM
