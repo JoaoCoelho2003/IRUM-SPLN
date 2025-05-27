@@ -1,10 +1,6 @@
 REPOSITORIUM_BASE_URL = "https://repositorium.sdum.uminho.pt/oai/oai"
 
-COLLECTIONS = {
-    "msc_di": "col_1822_21316",
-    "msc": "col_1822_2",
-    "phd": "col_1822_3"
-}
+COLLECTIONS = {"msc_di": "col_1822_21316", "msc": "col_1822_2", "phd": "col_1822_3"}
 
 METADATA_PREFIX = "dim"
 BATCH_SIZE = 100
@@ -25,3 +21,8 @@ MIN_ABSTRACT_LENGTH = 50
 MAX_ABSTRACT_LENGTH = 2000
 COMMON_KEYWORDS_THRESHOLD = 2
 RARE_KEYWORD_THRESHOLD = 5
+
+EXTRACTION_TIMEOUT = 45
+MAX_RETRIES = 3
+BASE_DELAY = 1.0
+MAX_CONSECUTIVE_ERRORS = 5

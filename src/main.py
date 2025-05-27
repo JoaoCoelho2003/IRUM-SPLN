@@ -1,6 +1,6 @@
 import os
 from config import *
-from data_extraction import RepositoriumExtractor
+from data_extraction import CollectionExtractor
 from data_processing import DocumentProcessor
 from similarity_calculator import SimilarityCalculator
 from model_trainer import SentenceTransformerTrainer
@@ -16,10 +16,9 @@ def extract_data():
     print("FASE 1: EXTRAÇÃO DE DADOS")
     print("="*60)
     
-    extractor = RepositoriumExtractor()
-    collection_id = COLLECTIONS["msc_di"]
+    extractor = CollectionExtractor()
     
-    xml_data = extractor.extract_collection(collection_id, max_records=MAX_RECORDS)
+    xml_data = extractor.extract_multiple_collections(COLLECTIONS, max_records=MAX_RECORDS)
     extractor.save_xml(xml_data)
     
     return xml_data
