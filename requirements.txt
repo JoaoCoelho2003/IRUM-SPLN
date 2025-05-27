@@ -1,0 +1,13 @@
+requests
+lxml
+pandas
+numpy
+scikit-learn
+sentence-transformers
+transformers
+nltk
+spacy
+tqdm
+jupyter
+matplotlib
+seaborn
