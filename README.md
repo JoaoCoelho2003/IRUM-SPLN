@@ -154,6 +154,23 @@ O sistema inclui várias métricas:
 - **Retrieval**: Precisão, recall, F1-score
 - **Performance**: Tempo de resposta, throughput
 
+### 📊 Critérios usados e os seus pesos para o calculo da similiaridade:
+##### Similaridade de palavras-chave (_keyword_similarity)
+- Calcula o quão semelhantes são os documentos com base nas palavras-chave (keywords).
+- Peso: 40% → 0.4
+
+##### Similaridade de assuntos UDC (_subject_similarity)
+- Usa a lista subjects_udc dos documentos (ex: categorias da CDU).
+- Peso: 30% → 0.3
+
+##### Similaridade de assuntos FoS (_subject_similarity)
+- Usa a lista subjects_fos (ex: "Fields of Science").
+- Peso: 20% → 0.2
+
+##### Similaridade de coleção (_collection_similarity)
+- Pode indicar se pertencem à mesma coleção, conferência, revista, etc.
+- Peso: 10% → 0.1
+
 ## 🔍 Exemplos de Uso
 
 ### Procura Básica
@@ -203,3 +220,6 @@ model = trainer.train_model(training_examples)
 - **Mariana Silva**
 
 ---
+
+
+

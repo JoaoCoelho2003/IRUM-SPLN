@@ -5,7 +5,7 @@ numpy
 scikit-learn
 sentence-transformers
 transformers
-nltk
+nltk==3.1.8
 spacy
 tqdm
 jupyter
