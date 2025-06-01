@@ -26,7 +26,7 @@ src/
 1. **Clone o repositório:**
 ```bash
 git clone <repository-url>
-cd repositorium-ir-system
+cd IRUM-SPLN
 ```
 
 2. **Instale as dependências:**
