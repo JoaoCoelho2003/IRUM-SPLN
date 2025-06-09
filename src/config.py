@@ -4,7 +4,7 @@ COLLECTIONS = {"msc_di": "col_1822_21316", "msc": "col_1822_2", "phd": "col_1822
 
 METADATA_PREFIX = "dim"
 BATCH_SIZE = 100
-MAX_RECORDS = 1000
+MAX_RECORDS = 100000
 
 DATA_DIR = "data"
 XML_FILE = f"{DATA_DIR}/repositorium_data.xml"
@@ -12,10 +12,10 @@ JSON_FILE = f"{DATA_DIR}/collection_documents.json"
 TRAIN_FILE = f"{DATA_DIR}/training_similarities.json"
 MODEL_DIR = "models"
 
-BASE_MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-SIMILARITY_THRESHOLD = 0.3
-TRAIN_EPOCHS = 3
-BATCH_SIZE_TRAIN = 16
+BASE_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+SIMILARITY_THRESHOLD = 0.2
+TRAIN_EPOCHS = 2
+BATCH_SIZE_TRAIN = 32
 
 MIN_ABSTRACT_LENGTH = 50
 MAX_ABSTRACT_LENGTH = 2000
