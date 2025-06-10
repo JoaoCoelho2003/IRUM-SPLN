@@ -4,7 +4,7 @@ from data_extraction import CollectionExtractor
 from data_processing import DocumentProcessor
 from similarity_calculator import SimilarityCalculator
 from model_trainer import SentenceTransformerTrainer
-from caching_system import EmbeddingCache, PerformanceMonitor
+from caching_system import PerformanceMonitor
 from data_validator import DataValidator
 from retrieval_system import InformationRetrievalSystem
 from utils import ensure_dir, load_json, save_json
@@ -128,7 +128,6 @@ def test_retrieval(ir_system):
     print("FASE 5: TESTE DO SISTEMA DE RETRIEVAL")
     print("=" * 60)
 
-    cache = EmbeddingCache()
     monitor = PerformanceMonitor()
 
     test_queries = [
@@ -156,7 +155,6 @@ def interactive_search(ir_system):
     print("MODO INTERATIVO")
     print("=" * 60)
 
-    cache = EmbeddingCache()
     monitor = PerformanceMonitor()
 
     print("Sistema carregado e pronto!")

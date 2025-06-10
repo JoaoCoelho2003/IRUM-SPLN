@@ -4,6 +4,7 @@ from sentence_transformers import SentenceTransformer
 from config import *
 from utils import load_json
 from query_processor import QueryProcessor
+from caching_system import EmbeddingCache
 
 
 class InformationRetrievalSystem:
@@ -12,6 +13,7 @@ class InformationRetrievalSystem:
         self.documents = []
         self.document_embeddings = None
         self.query_processor = QueryProcessor()
+        self.cache = EmbeddingCache()
         self.load_model(model_path)
 
     def load_model(self, model_path: str) -> None:
@@ -30,14 +32,55 @@ class InformationRetrievalSystem:
         self._precompute_embeddings()
 
     def _precompute_embeddings(self) -> None:
-        print("A calcular embeddings dos documentos...")
+        print("A verificar cache de embeddings dos documentos...")
 
+        model_name = self.model._modules["0"].auto_model.config.name_or_path
         abstracts = [doc["abstract"] for doc in self.documents]
-        self.document_embeddings = self.model.encode(
-            abstracts, show_progress_bar=True, convert_to_numpy=True
-        )
 
-        print("Embeddings calculados!")
+        cached_embeddings = self.cache.batch_get_embeddings(abstracts, model_name)
+
+        if len(cached_embeddings) == len(abstracts):
+            print(f"✅ Todos os {len(abstracts)} embeddings encontrados em cache!")
+            self.document_embeddings = np.array(
+                [cached_embeddings[abstract] for abstract in abstracts]
+            )
+        else:
+            print(
+                f"📊 Cache: {len(cached_embeddings)}/{len(abstracts)} embeddings encontrados"
+            )
+            print("A calcular embeddings em falta...")
+
+            uncached_abstracts = [
+                abstract for abstract in abstracts if abstract not in cached_embeddings
+            ]
+
+            if uncached_abstracts:
+                new_embeddings = self.model.encode(
+                    uncached_abstracts, show_progress_bar=True, convert_to_numpy=True
+                )
+
+                embedding_pairs = list(zip(uncached_abstracts, new_embeddings))
+                self.cache.batch_store_embeddings(embedding_pairs, model_name)
+                print(
+                    f"💾 {len(uncached_abstracts)} novos embeddings guardados em cache"
+                )
+
+            all_embeddings = []
+            for abstract in abstracts:
+                if abstract in cached_embeddings:
+                    all_embeddings.append(cached_embeddings[abstract])
+                else:
+                    embedding = self.model.encode([abstract], convert_to_numpy=True)[0]
+                    all_embeddings.append(embedding)
+                    self.cache.store_embedding(abstract, model_name, embedding)
+
+            self.document_embeddings = np.array(all_embeddings)
+
+        cache_stats = self.cache.get_cache_stats()
+        print(
+            f"📈 Cache stats: {cache_stats['memory_cached_items']} em memória, {cache_stats['disk_cached_items']} em disco"
+        )
+        print("Embeddings dos documentos prontos!")
 
     def retrieve(
         self, query: str, top_k: int = 10
@@ -58,7 +101,17 @@ class InformationRetrievalSystem:
         print(f"Query processada: '{processed_query_data['processed_query']}'")
         print(f"Tipo de query: {processed_query_data['query_type']}")
 
-        query_embedding = self.model.encode([final_query], convert_to_numpy=True)[0]
+        model_name = self.model._modules["0"].auto_model.config.name_or_path
+        cached_query_embedding = self.cache.get_embedding(final_query, model_name)
+
+        if cached_query_embedding is not None:
+            print("🚀 Embedding da query encontrado em cache!")
+            query_embedding = cached_query_embedding
+        else:
+            print("🔄 A calcular embedding da query...")
+            query_embedding = self.model.encode([final_query], convert_to_numpy=True)[0]
+            self.cache.store_embedding(final_query, model_name, query_embedding)
+            print("💾 Embedding da query guardado em cache")
 
         similarities = self._calculate_similarities(query_embedding)
 
@@ -132,59 +185,20 @@ class InformationRetrievalSystem:
 
             print("-" * 80)
 
-    def evaluate_retrieval(
-        self, test_queries: List[Dict[str, Any]]
-    ) -> Dict[str, float]:
-        print("A avaliar sistema de retrieval...")
+    def get_cache_stats(self) -> Dict[str, Any]:
+        return self.cache.get_cache_stats()
 
-        precisions = []
-        recalls = []
-
-        for query_data in test_queries:
-            query = query_data["query"]
-            relevant_docs = set(query_data["relevant_docs"])
-
-            results = self.retrieve(query, top_k=20)
-            retrieved_docs = {doc["id"] for doc, _ in results}
-
-            if retrieved_docs:
-                precision = len(relevant_docs.intersection(retrieved_docs)) / len(
-                    retrieved_docs
-                )
-                precisions.append(precision)
-
-            if relevant_docs:
-                recall = len(relevant_docs.intersection(retrieved_docs)) / len(
-                    relevant_docs
-                )
-                recalls.append(recall)
-
-        avg_precision = np.mean(precisions) if precisions else 0.0
-        avg_recall = np.mean(recalls) if recalls else 0.0
-        f1_score = (
-            2 * avg_precision * avg_recall / (avg_precision + avg_recall)
-            if (avg_precision + avg_recall) > 0
-            else 0.0
-        )
-
-        metrics = {
-            "precision": avg_precision,
-            "recall": avg_recall,
-            "f1_score": f1_score,
-        }
-
-        print(f"Métricas de retrieval:")
-        print(f"Precisão: {metrics['precision']:.4f}")
-        print(f"Recall: {metrics['recall']:.4f}")
-        print(f"F1-Score: {metrics['f1_score']:.4f}")
-
-        return metrics
+    def clear_cache(self) -> None:
+        self.cache.clear_cache()
+        print("Cache limpo!")
 
 
 def main():
     ir_system = InformationRetrievalSystem()
 
     ir_system.load_collection()
+
+    print(f"\nEstatísticas do cache: {ir_system.get_cache_stats()}")
 
     test_queries = [
         "machine learning algorithms",
@@ -197,6 +211,8 @@ def main():
     for query in test_queries:
         ir_system.search_and_display(query, top_k=3)
         print("\n" + "=" * 100 + "\n")
+
+    print(f"\nEstatísticas finais do cache: {ir_system.get_cache_stats()}")
 
 
 if __name__ == "__main__":
