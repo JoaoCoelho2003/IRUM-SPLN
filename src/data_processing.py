@@ -49,6 +49,14 @@ class DocumentProcessor:
             if metadata is None:
                 return None
 
+            collection_values = []
+            relation_fields = metadata.findall(
+                ".//dim:field[@element='relation']", self.namespaces
+            )
+            for field in relation_fields:
+                if field.text and field.text.strip():
+                    collection_values.append(field.text.strip())
+
             doc = {
                 "id": self._extract_identifier(record),
                 "title": self._extract_field(metadata, "title"),
@@ -66,9 +74,7 @@ class DocumentProcessor:
                 "subjects_fos": self._extract_multiple_fields(
                     metadata, "subject", "fos"
                 ),
-                "collections": self._extract_multiple_fields(
-                    metadata, "relation", "ispartof"
-                ),
+                "collections": collection_values,
             }
 
             doc = self._clean_document(doc)
