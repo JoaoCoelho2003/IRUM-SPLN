@@ -136,6 +136,35 @@ class InformationRetrievalSystem:
 
         return results
 
+    def retrieve_similar_documents(
+        self, doc_index: int, top_k: int = 10
+    ) -> List[Tuple[Dict[str, Any], float]]:
+        if not self.documents or self.document_embeddings is None:
+            raise ValueError("Collection not loaded")
+
+        if doc_index < 0 or doc_index >= len(self.documents):
+            raise ValueError(
+                f"Document index {doc_index} out of range (0-{len(self.documents)-1})"
+            )
+
+        print(
+            f"{Fore.CYAN}Finding documents similar to document #{doc_index}{Style.RESET_ALL}"
+        )
+        print(
+            f"{Fore.YELLOW}Title: {self.documents[doc_index]['title']}{Style.RESET_ALL}"
+        )
+
+        doc_embedding = self.document_embeddings[doc_index]
+        similarities = self._calculate_similarities(doc_embedding)
+        similarities[doc_index] = -1
+        ranked_indices = np.argsort(similarities)[::-1]
+
+        results = []
+        for i in ranked_indices[:top_k]:
+            results.append((self.documents[i], float(similarities[i])))
+
+        return results
+
     def _calculate_similarities(self, query_embedding: np.ndarray) -> np.ndarray:
         similarities = np.dot(self.document_embeddings, query_embedding) / (
             np.linalg.norm(self.document_embeddings, axis=1)
@@ -197,6 +226,71 @@ class InformationRetrievalSystem:
                 )
 
             print("-" * 80)
+
+    def display_document(self, doc_index: int) -> None:
+        """Display the full details of a document"""
+        if doc_index < 0 or doc_index >= len(self.documents):
+            print(f"{Fore.RED}Invalid document index: {doc_index}{Style.RESET_ALL}")
+            return
+
+        doc = self.documents[doc_index]
+
+        print(f"\n{'='*80}")
+        print(f"{Fore.MAGENTA}DOCUMENT #{doc_index}{Style.RESET_ALL}")
+        print(f"{'='*80}")
+
+        print(f"{Fore.YELLOW}TITLE: {doc['title']}{Style.RESET_ALL}")
+        print(
+            f"{Fore.GREEN}AUTHORS: {', '.join(doc.get('authors', []))}{Style.RESET_ALL}"
+        )
+        print(f"{Fore.BLUE}DATE: {doc.get('date', 'N/A')}{Style.RESET_ALL}")
+        print(f"{Fore.BLUE}TYPE: {doc.get('type', 'N/A')}{Style.RESET_ALL}")
+        print(f"{Fore.BLUE}LANGUAGE: {doc.get('language', 'N/A')}{Style.RESET_ALL}")
+
+        if doc.get("keywords"):
+            print(
+                f"{Fore.MAGENTA}KEYWORDS: {', '.join(doc['keywords'])}{Style.RESET_ALL}"
+            )
+
+        print(f"\n{Fore.WHITE}ABSTRACT:{Style.RESET_ALL}")
+        print(f"{doc['abstract']}")
+
+        print("-" * 80)
+
+    def find_and_display_similar_documents(
+        self, doc_index: int, top_k: int = 5
+    ) -> None:
+        try:
+            self.display_document(doc_index)
+
+            results = self.retrieve_similar_documents(doc_index, top_k)
+
+            print(f"\n{'='*80}")
+            print(
+                f"{Fore.MAGENTA}SIMILAR DOCUMENTS TO #{doc_index}: '{self.documents[doc_index]['title']}'{Style.RESET_ALL}"
+            )
+            print(f"{'='*80}")
+
+            for i, (doc, score) in enumerate(results, 1):
+                print(f"\n{Fore.CYAN}{i}. SCORE: {score:.4f}{Style.RESET_ALL}")
+                print(f"{Fore.YELLOW}TITLE: {doc['title']}{Style.RESET_ALL}")
+                print(
+                    f"{Fore.GREEN}AUTHORS: {', '.join(doc.get('authors', []))}{Style.RESET_ALL}"
+                )
+                print(f"{Fore.BLUE}DATE: {doc.get('date', 'N/A')}{Style.RESET_ALL}")
+                print(
+                    f"{Fore.WHITE}ABSTRACT: {doc['abstract'][:300]}...{Style.RESET_ALL}"
+                )
+
+                if doc.get("keywords"):
+                    print(
+                        f"{Fore.MAGENTA}KEYWORDS: {', '.join(doc['keywords'][:5])}{Style.RESET_ALL}"
+                    )
+
+                print("-" * 80)
+
+        except ValueError as e:
+            print(f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
 
     def get_cache_stats(self) -> Dict[str, Any]:
         return self.cache.get_cache_stats()
