@@ -5,6 +5,9 @@ import torch
 from typing import List
 import numpy as np
 from config import BASE_MODEL
+from colorama import Fore, Style, init
+
+init(autoreset=True)
 
 
 class SentenceTransformerTrainer:
@@ -13,7 +16,9 @@ class SentenceTransformerTrainer:
         self.model = None
 
     def create_training_setup(self, training_examples: List[InputExample]):
-        print(f"Setting up training with {len(training_examples)} examples...")
+        print(
+            f"{Fore.CYAN}Setting up training with {len(training_examples)} examples...{Style.RESET_ALL}"
+        )
 
         batch_size = 32
         epochs = 2
@@ -59,7 +64,7 @@ class SentenceTransformerTrainer:
         patience_counter = 0
 
         for epoch in range(epochs):
-            print(f"\nEpoch {epoch + 1}/{epochs}")
+            print(f"{Fore.YELLOW}\nEpoch {epoch + 1}/{epochs}{Style.RESET_ALL}")
 
             self.model.fit(
                 train_objectives=[(train_dataloader, train_loss)],
@@ -71,7 +76,9 @@ class SentenceTransformerTrainer:
 
             if validation_examples:
                 val_score = self._evaluate_quickly(validation_examples)
-                print(f"Validation correlation: {val_score:.4f}")
+                print(
+                    f"{Fore.BLUE}Validation correlation: {val_score:.4f}{Style.RESET_ALL}"
+                )
 
                 if val_score > best_score:
                     best_score = val_score
@@ -81,7 +88,7 @@ class SentenceTransformerTrainer:
                     patience_counter += 1
 
                 if patience_counter >= patience:
-                    print("Early stopping triggered")
+                    print(f"{Fore.RED}Early stopping triggered{Style.RESET_ALL}")
                     self.model = SentenceTransformer("models/best_model_temp")
                     break
 
@@ -116,7 +123,7 @@ class SentenceTransformerTrainer:
         return correlation if not np.isnan(correlation) else 0.0
 
     def load_training_data(self, filepath: str) -> List[InputExample]:
-        print("Loading training data...")
+        print(f"{Fore.CYAN}Loading training data...{Style.RESET_ALL}")
 
         from utils import load_json
 
@@ -129,11 +136,13 @@ class SentenceTransformerTrainer:
             )
             examples.append(example)
 
-        print(f"Loaded {len(examples)} training examples")
+        print(f"{Fore.GREEN}Loaded {len(examples)} training examples{Style.RESET_ALL}")
         return examples
 
     def train_model(self, training_examples: List[InputExample]) -> SentenceTransformer:
-        print(f"Starting model training based on: {self.base_model}")
+        print(
+            f"{Fore.MAGENTA}Starting model training based on: {self.base_model}{Style.RESET_ALL}"
+        )
 
         self.model = SentenceTransformer(self.base_model)
 
@@ -141,7 +150,7 @@ class SentenceTransformerTrainer:
 
         train_loss = losses.CosineSimilarityLoss(self.model)
 
-        print(f"Training for 2 epochs...")
+        print(f"{Fore.YELLOW}Training for 2 epochs...{Style.RESET_ALL}")
 
         self.model.fit(
             train_objectives=[(train_dataloader, train_loss)],
@@ -150,7 +159,7 @@ class SentenceTransformerTrainer:
             show_progress_bar=True,
         )
 
-        print("Training completed!")
+        print(f"{Fore.GREEN}Training completed!{Style.RESET_ALL}")
         return self.model
 
     def save_model(self, model_path: str) -> None:
@@ -161,15 +170,15 @@ class SentenceTransformerTrainer:
 
         ensure_dir(model_path)
         self.model.save(model_path)
-        print(f"Model saved to: {model_path}")
+        print(f"{Fore.GREEN}Model saved to: {model_path}{Style.RESET_ALL}")
 
     def load_model(self, model_path: str) -> SentenceTransformer:
         if os.path.exists(model_path):
             self.model = SentenceTransformer(model_path)
-            print(f"Model loaded from: {model_path}")
+            print(f"{Fore.GREEN}Model loaded from: {model_path}{Style.RESET_ALL}")
         else:
-            print(f"Model not found at: {model_path}")
-            print("Loading base model...")
+            print(f"{Fore.RED}Model not found at: {model_path}{Style.RESET_ALL}")
+            print(f"{Fore.YELLOW}Loading base model...{Style.RESET_ALL}")
             self.model = SentenceTransformer(self.base_model)
 
         return self.model

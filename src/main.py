@@ -8,6 +8,9 @@ from caching_system import PerformanceMonitor
 from data_validator import DataValidator
 from retrieval_system import InformationRetrievalSystem
 from utils import ensure_dir, load_json, save_json
+from colorama import Fore, Style, init
+
+init(autoreset=True)
 
 
 def setup_directories():
@@ -18,7 +21,7 @@ def setup_directories():
 
 def extract_data():
     print("=" * 60)
-    print("FASE 1: EXTRAÇÃO DE DADOS")
+    print(f"{Fore.CYAN}PHASE 1: DATA EXTRACTION{Style.RESET_ALL}")
     print("=" * 60)
 
     extractor = CollectionExtractor()
@@ -33,7 +36,7 @@ def extract_data():
 
 def process_data():
     print("\n" + "=" * 60)
-    print("FASE 2: PROCESSAMENTO DE DADOS")
+    print(f"{Fore.CYAN}PHASE 2: DATA PROCESSING{Style.RESET_ALL}")
     print("=" * 60)
 
     validator = DataValidator()
@@ -52,7 +55,7 @@ def process_data():
 
 def validate_data():
     print("\n" + "=" * 60)
-    print("FASE 2.5: VALIDAÇÃO E LIMPEZA DE DADOS")
+    print(f"{Fore.CYAN}PHASE 2.5: DATA VALIDATION AND CLEANING{Style.RESET_ALL}")
     print("=" * 60)
 
     validator = DataValidator()
@@ -65,7 +68,7 @@ def validate_data():
 
 def calculate_similarities(documents):
     print("\n" + "=" * 60)
-    print("FASE 3: CÁLCULO DE SIMILARIDADES")
+    print(f"{Fore.CYAN}PHASE 3: SIMILARITY CALCULATION{Style.RESET_ALL}")
     print("=" * 60)
 
     monitor = PerformanceMonitor()
@@ -79,14 +82,16 @@ def calculate_similarities(documents):
     calculator.save_training_data(training_pairs, TRAIN_FILE)
 
     duration = monitor.end_timer("similarity_calculation")
-    print(f"Similarity calculation completed in {duration:.2f} seconds")
+    print(
+        f"{Fore.GREEN}Similarity calculation completed in {duration:.2f} seconds{Style.RESET_ALL}"
+    )
 
     return training_pairs
 
 
 def train_model():
     print("\n" + "=" * 60)
-    print("FASE 4: TREINO DO MODELO")
+    print(f"{Fore.CYAN}PHASE 4: MODEL TRAINING{Style.RESET_ALL}")
     print("=" * 60)
 
     monitor = PerformanceMonitor()
@@ -96,7 +101,7 @@ def train_model():
     training_examples = trainer.load_training_data(TRAIN_FILE)
 
     if not training_examples:
-        print("No training data available!")
+        print(f"{Fore.RED}No training data available!{Style.RESET_ALL}")
         return None
 
     if len(training_examples) > 100:
@@ -107,14 +112,16 @@ def train_model():
     trainer.save_model(MODEL_DIR)
 
     duration = monitor.end_timer("model_training")
-    print(f"Model training completed in {duration:.2f} seconds")
+    print(
+        f"{Fore.GREEN}Model training completed in {duration:.2f} seconds{Style.RESET_ALL}"
+    )
 
     return model
 
 
 def initialize_retrieval_system():
     print("\n" + "=" * 60)
-    print("INICIALIZANDO SISTEMA DE RETRIEVAL")
+    print(f"{Fore.CYAN}INITIALIZING RETRIEVAL SYSTEM{Style.RESET_ALL}")
     print("=" * 60)
 
     ir_system = InformationRetrievalSystem()
@@ -125,7 +132,7 @@ def initialize_retrieval_system():
 
 def test_retrieval(ir_system):
     print("\n" + "=" * 60)
-    print("FASE 5: TESTE DO SISTEMA DE RETRIEVAL")
+    print(f"{Fore.CYAN}PHASE 5: RETRIEVAL SYSTEM TEST{Style.RESET_ALL}")
     print("=" * 60)
 
     monitor = PerformanceMonitor()
@@ -141,27 +148,29 @@ def test_retrieval(ir_system):
     for query in test_queries:
         monitor.start_timer("query_processing")
 
-        print(f"\nTeste com query: '{query}'")
+        print(f"\n{Fore.YELLOW}Testing with query: '{query}'{Style.RESET_ALL}")
         results = ir_system.retrieve(query, top_k=3)
 
         duration = monitor.end_timer("query_processing")
 
         for i, (doc, score) in enumerate(results, 1):
-            print(f"{i}. [{score:.3f}] {doc['title'][:80]}...")
+            print(
+                f"{Fore.GREEN}{i}. [{score:.3f}] {doc['title'][:80]}...{Style.RESET_ALL}"
+            )
 
 
 def interactive_search(ir_system):
     print("\n" + "=" * 60)
-    print("MODO INTERATIVO")
+    print(f"{Fore.CYAN}INTERACTIVE MODE{Style.RESET_ALL}")
     print("=" * 60)
 
     monitor = PerformanceMonitor()
 
-    print("Sistema carregado e pronto!")
-    print("Digite as suas consultas (ou 'quit' para sair):")
+    print(f"{Fore.GREEN}System loaded and ready!{Style.RESET_ALL}")
+    print(f"{Fore.YELLOW}Enter your queries (or 'quit' to exit):{Style.RESET_ALL}")
 
     while True:
-        query = input("\nQuery: ").strip()
+        query = input(f"\n{Fore.CYAN}Query: {Style.RESET_ALL}").strip()
 
         if query.lower() in ["quit", "exit", "sair"]:
             break
@@ -173,7 +182,7 @@ def interactive_search(ir_system):
 
 
 def main():
-    print("SISTEMA DE INFORMATION RETRIEVAL - REPOSITORIUM")
+    print(f"{Fore.MAGENTA}INFORMATION RETRIEVAL SYSTEM - REPOSITORIUM{Style.RESET_ALL}")
     print("=" * 60)
 
     total_monitor = PerformanceMonitor()
@@ -182,7 +191,9 @@ def main():
     setup_directories()
 
     if not os.path.exists(JSON_FILE):
-        print("Dados não encontrados. A executar pipeline completo...")
+        print(
+            f"{Fore.YELLOW}Data not found. Running complete pipeline...{Style.RESET_ALL}"
+        )
 
         if not os.path.exists(XML_FILE):
             extract_data()
@@ -197,16 +208,20 @@ def main():
             train_model()
 
     else:
-        print("Dados encontrados.")
+        print(f"{Fore.GREEN}Data found.{Style.RESET_ALL}")
 
         documents = load_json(JSON_FILE)
-        print(f"A coleção atual tem {len(documents)} documentos")
+        print(
+            f"{Fore.BLUE}Current collection has {len(documents)} documents{Style.RESET_ALL}"
+        )
 
-        response = input("Deseja validar e limpar a coleção existente? (s/n): ")
+        response = input(
+            f"{Fore.YELLOW}Do you want to validate and clean the existing collection? (y/n): {Style.RESET_ALL}"
+        )
         if response.lower() in ["s", "sim", "y", "yes"]:
             documents = validate_data()
 
-        print("A avançar para teste do sistema...")
+        print(f"{Fore.CYAN}Proceeding to system test...{Style.RESET_ALL}")
 
     if os.path.exists(JSON_FILE):
         ir_system = initialize_retrieval_system()
@@ -214,13 +229,17 @@ def main():
         test_retrieval(ir_system)
 
         total_duration = total_monitor.end_timer("total_pipeline")
-        print(f"\nPipeline total executado em {total_duration:.2f}s")
+        print(
+            f"\n{Fore.GREEN}Total pipeline executed in {total_duration:.2f}s{Style.RESET_ALL}"
+        )
 
-        response = input("\nDeseja entrar no modo interativo? (s/n): ")
+        response = input(
+            f"\n{Fore.YELLOW}Do you want to enter interactive mode? (y/n): {Style.RESET_ALL}"
+        )
         if response.lower() in ["s", "sim", "y", "yes"]:
             interactive_search(ir_system)
 
-    print("\nProcesso concluído!")
+    print(f"\n{Fore.GREEN}Process completed!{Style.RESET_ALL}")
 
 
 if __name__ == "__main__":

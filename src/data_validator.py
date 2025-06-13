@@ -2,6 +2,9 @@ import xml.etree.ElementTree as ET
 from typing import List, Dict, Any
 import re
 from utils import load_json, save_json
+from colorama import Fore, Style, init
+
+init(autoreset=True)
 
 
 class DataValidator:
@@ -17,17 +20,17 @@ class DataValidator:
         }
 
     def validate_xml_before_processing(self, xml_filepath: str) -> str:
-        print("A validar e limpar ficheiro XML...")
+        print(f"{Fore.CYAN}Validating and cleaning XML file...{Style.RESET_ALL}")
 
         try:
             tree = ET.parse(xml_filepath)
             root = tree.getroot()
         except ET.ParseError as e:
-            print(f"Error parsing XML: {e}")
+            print(f"{Fore.RED}Error parsing XML: {e}{Style.RESET_ALL}")
             return xml_filepath
 
         records = root.findall(".//{http://www.openarchives.org/OAI/2.0/}record")
-        print(f"Foram encontrados {len(records)} registos em XML")
+        print(f"{Fore.YELLOW}Found {len(records)} records in XML{Style.RESET_ALL}")
 
         seen_identifiers = set()
         unique_records = []
@@ -47,21 +50,27 @@ class DataValidator:
                         unique_records.append(record)
                     else:
                         duplicates_in_xml += 1
-                        print(f"Registo XML duplicado encontrado: {identifier}")
+                        print(
+                            f"{Fore.RED}Duplicate XML record found: {identifier}{Style.RESET_ALL}"
+                        )
 
         if duplicates_in_xml > 0:
-            print(f"Foram removidos {duplicates_in_xml} registos duplicados a partir do XML")
+            print(
+                f"{Fore.YELLOW}Removed {duplicates_in_xml} duplicate records from XML{Style.RESET_ALL}"
+            )
 
             cleaned_xml_path = xml_filepath.replace(".xml", "_cleaned.xml")
 
             new_root = ET.Element("collection")
-            for record in unique_records:
+            for recor in unique_records:
                 new_root.append(record)
 
             tree = ET.ElementTree(new_root)
             tree.write(cleaned_xml_path, encoding="utf-8", xml_declaration=True)
 
-            print(f"XML limpo guardado em: {cleaned_xml_path}")
+            print(
+                f"{Fore.GREEN}Cleaned XML saved to: {cleaned_xml_path}{Style.RESET_ALL}"
+            )
             return cleaned_xml_path
 
         return xml_filepath
@@ -69,7 +78,9 @@ class DataValidator:
     def validate_and_clean_documents(
         self, documents: List[Dict[str, Any]]
     ) -> List[Dict[str, Any]]:
-        print(f"A começar a validação de {len(documents)} documentos...")
+        print(
+            f"{Fore.CYAN}Starting validation of {len(documents)} documents...{Style.RESET_ALL}"
+        )
 
         self.validation_stats["total_documents"] = len(documents)
 
@@ -89,7 +100,7 @@ class DataValidator:
     def _remove_duplicates(
         self, documents: List[Dict[str, Any]]
     ) -> List[Dict[str, Any]]:
-        print("A remover duplicados...")
+        print(f"{Fore.YELLOW}Removing duplicates...{Style.RESET_ALL}")
 
         seen_ids = set()
         no_id_duplicates = []
@@ -103,7 +114,9 @@ class DataValidator:
                 no_id_duplicates.append(doc)
 
         id_duplicates_removed = len(documents) - len(no_id_duplicates)
-        print(f"Foram removidos {id_duplicates_removed} IDs duplicados")
+        print(
+            f"{Fore.BLUE}Removed {id_duplicates_removed} duplicate IDs{Style.RESET_ALL}"
+        )
 
         seen_content = set()
         unique_documents = []
@@ -120,7 +133,9 @@ class DataValidator:
                 unique_documents.append(doc)
 
         content_duplicates_removed = len(no_id_duplicates) - len(unique_documents)
-        print(f"Foram removidos {content_duplicates_removed} registos com conteúdo duplicado")
+        print(
+            f"{Fore.BLUE}Removed {content_duplicates_removed} records with duplicate content{Style.RESET_ALL}"
+        )
 
         self.validation_stats["duplicates_removed"] = (
             id_duplicates_removed + content_duplicates_removed
@@ -131,7 +146,7 @@ class DataValidator:
     def _validate_document_quality(
         self, documents: List[Dict[str, Any]]
     ) -> List[Dict[str, Any]]:
-        print("A validar a qualidade do documento...")
+        print(f"{Fore.YELLOW}Validating document quality...{Style.RESET_ALL}")
 
         valid_documents = []
 
@@ -156,14 +171,16 @@ class DataValidator:
             else:
                 self.validation_stats["invalid_removed"] += 1
 
-        print(f"Foram removidos {self.validation_stats['invalid_removed']} documentos inválidos")
+        print(
+            f"{Fore.RED}Removed {self.validation_stats['invalid_removed']} invalid documents{Style.RESET_ALL}"
+        )
 
         return valid_documents
 
     def _clean_and_normalize(
         self, documents: List[Dict[str, Any]]
     ) -> List[Dict[str, Any]]:
-        print("A limpar e normalizar os dados...")
+        print(f"{Fore.YELLOW}Cleaning and normalizing data...{Style.RESET_ALL}")
 
         for doc in documents:
             if "title" in doc:
@@ -192,7 +209,7 @@ class DataValidator:
     def _final_validation(
         self, documents: List[Dict[str, Any]]
     ) -> List[Dict[str, Any]]:
-        print("Validação Final...")
+        print(f"{Fore.YELLOW}Final validation...{Style.RESET_ALL}")
 
         final_documents = []
 
@@ -237,23 +254,39 @@ class DataValidator:
 
     def _print_validation_report(self):
         print("\n" + "=" * 60)
-        print("RELATÓRIO DA VALIDAÇÃO DOS DADOS")
+        print(f"{Fore.CYAN}DATA VALIDATION REPORT{Style.RESET_ALL}")
         print("=" * 60)
 
         stats = self.validation_stats
 
-        print(f"Documentos Originais:        {stats['total_documents']:,}")
-        print(f"Duplicados Removidos:        {stats['duplicates_removed']:,}")
-        print(f"Documentos Inválidos Removidos: {stats['invalid_removed']:,}")
-        print(f"  - Títulos a Faltar:        {stats['missing_titles']:,}")
-        print(f"  - Abstracts Vazios:       {stats['empty_abstracts']:,}")
-        print(f"  - Abstracts Curtos:       {stats['short_abstracts']:,}")
+        print(
+            f"{Fore.YELLOW}Original Documents:        {stats['total_documents']:,}{Style.RESET_ALL}"
+        )
+        print(
+            f"{Fore.RED}Duplicates Removed:        {stats['duplicates_removed']:,}{Style.RESET_ALL}"
+        )
+        print(
+            f"{Fore.RED}Invalid Documents Removed: {stats['invalid_removed']:,}{Style.RESET_ALL}"
+        )
+        print(
+            f"{Fore.RED}  - Missing Titles:        {stats['missing_titles']:,}{Style.RESET_ALL}"
+        )
+        print(
+            f"{Fore.RED}  - Empty Abstracts:       {stats['empty_abstracts']:,}{Style.RESET_ALL}"
+        )
+        print(
+            f"{Fore.RED}  - Short Abstracts:       {stats['short_abstracts']:,}{Style.RESET_ALL}"
+        )
         print("-" * 40)
-        print(f"Documentos Válidos:     {stats['final_documents']:,}")
+        print(
+            f"{Fore.GREEN}Valid Documents:     {stats['final_documents']:,}{Style.RESET_ALL}"
+        )
 
         if stats["total_documents"] > 0:
             retention_rate = (stats["final_documents"] / stats["total_documents"]) * 100
-            print(f"Taxa de Retenção:            {retention_rate:.1f}%")
+            print(
+                f"{Fore.BLUE}Retention Rate:            {retention_rate:.1f}%{Style.RESET_ALL}"
+            )
 
         print("=" * 60)
 
@@ -263,17 +296,17 @@ def main():
 
     validator = DataValidator()
 
-    print("A carregar a coleção de documentos...")
+    print(f"{Fore.CYAN}Loading document collection...{Style.RESET_ALL}")
     documents = load_json(JSON_FILE)
 
     backup_file = JSON_FILE.replace(".json", "_before_validation.json")
     save_json(documents, backup_file)
-    print(f"Backup criado: {backup_file}")
+    print(f"{Fore.GREEN}Backup created: {backup_file}{Style.RESET_ALL}")
 
     clean_documents = validator.validate_and_clean_documents(documents)
 
     save_json(clean_documents, JSON_FILE)
-    print(f"Coleção Validada guardada em: {JSON_FILE}")
+    print(f"{Fore.GREEN}Validated collection saved to: {JSON_FILE}{Style.RESET_ALL}")
 
 
 if __name__ == "__main__":

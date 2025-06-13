@@ -4,6 +4,9 @@ from sklearn.cluster import MiniBatchKMeans
 from typing import List, Dict, Any, Tuple
 import random
 from collections import defaultdict
+from colorama import Fore, Style, init
+
+init(autoreset=True)
 
 
 class SimilarityCalculator:
@@ -24,10 +27,12 @@ class SimilarityCalculator:
     def create_training_collection(
         self, documents: List[Dict[str, Any]]
     ) -> List[Tuple[str, str, float]]:
-        print(f"Processing similarity calculation for {len(documents)} documents...")
+        print(
+            f"{Fore.CYAN}Processing similarity calculation for {len(documents)} documents...{Style.RESET_ALL}"
+        )
 
         abstracts = [doc.get("abstract", "") for doc in documents]
-        print("Creating TF-IDF vectors...")
+        print(f"{Fore.YELLOW}Creating TF-IDF vectors...{Style.RESET_ALL}")
         self.document_vectors = self.tfidf_vectorizer.fit_transform(abstracts)
 
         training_pairs = []
@@ -37,13 +42,17 @@ class SimilarityCalculator:
         else:
             training_pairs = self._smart_sampling(documents)
 
-        print(f"Generated {len(training_pairs)} training pairs")
+        print(
+            f"{Fore.GREEN}Generated {len(training_pairs)} training pairs{Style.RESET_ALL}"
+        )
         return training_pairs
 
     def _clustering_based_sampling(
         self, documents: List[Dict[str, Any]]
     ) -> List[Tuple[str, str, float]]:
-        print(f"Using clustering-based sampling with {self.n_clusters} clusters...")
+        print(
+            f"{Fore.MAGENTA}Using clustering-based sampling with {self.n_clusters} clusters...{Style.RESET_ALL}"
+        )
 
         kmeans = MiniBatchKMeans(
             n_clusters=self.n_clusters, random_state=42, batch_size=1000
@@ -99,7 +108,7 @@ class SimilarityCalculator:
     def _smart_sampling(
         self, documents: List[Dict[str, Any]]
     ) -> List[Tuple[str, str, float]]:
-        print("Using smart sampling strategy...")
+        print(f"{Fore.BLUE}Using smart sampling strategy...{Style.RESET_ALL}")
 
         n_docs = len(documents)
         max_pairs = int(n_docs * self.sample_ratio * n_docs)
@@ -202,4 +211,4 @@ class SimilarityCalculator:
         from utils import save_json
 
         save_json(training_data, filepath)
-        print(f"Training data saved to: {filepath}")
+        print(f"{Fore.GREEN}Training data saved to: {filepath}{Style.RESET_ALL}")

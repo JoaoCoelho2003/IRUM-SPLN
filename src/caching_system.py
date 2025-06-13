@@ -3,6 +3,9 @@ import hashlib
 import os
 from typing import Dict, List, Any
 import numpy as np
+from colorama import Fore, Style, init
+
+init(autoreset=True)
 
 
 class EmbeddingCache:
@@ -51,7 +54,9 @@ class EmbeddingCache:
             with open(cache_path, "wb") as f:
                 pickle.dump(embedding, f)
         except Exception as e:
-            print(f"Warning: Could not cache embedding: {e}")
+            print(
+                f"{Fore.YELLOW}Warning: Could not cache embedding: {e}{Style.RESET_ALL}"
+            )
 
     def batch_get_embeddings(
         self, texts: List[str], model_name: str

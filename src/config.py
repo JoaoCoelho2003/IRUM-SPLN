@@ -1,10 +1,10 @@
 REPOSITORIUM_BASE_URL = "https://repositorium.sdum.uminho.pt/oai/oai"
 
-COLLECTIONS = {"msc_di": "col_1822_21316", "msc": "col_1822_2", "phd": "col_1822_3"}
+COLLECTIONS = {"msc_di": "col_1822_21316", "phd": "col_1822_3"}
 
 METADATA_PREFIX = "dim"
 BATCH_SIZE = 100
-MAX_RECORDS = 100000
+MAX_RECORDS = 10000
 
 DATA_DIR = "data"
 XML_FILE = f"{DATA_DIR}/repositorium_data.xml"

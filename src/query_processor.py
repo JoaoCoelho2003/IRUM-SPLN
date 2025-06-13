@@ -1,5 +1,8 @@
 from typing import List, Dict, Any
 from utils import clean_text, extract_keywords
+from colorama import Fore, Style, init
+
+init(autoreset=True)
 
 
 class QueryProcessor:
@@ -59,18 +62,20 @@ def main():
         "inteligência artificial",
     ]
 
-    print("Teste do Processador de Queries")
+    print(f"{Fore.CYAN}Query Processor Test{Style.RESET_ALL}")
     print("=" * 50)
 
     for query in test_queries:
-        print(f"\nQuery original: '{query}'")
+        print(f"\n{Fore.YELLOW}Original query: '{query}'{Style.RESET_ALL}")
         result = processor.process_query(query)
 
-        print(f"Query processada: '{result['processed_query']}'")
-        print(f"Keywords: {result['keywords']}")
-        print(f"Tipo: {result['query_type']}")
+        print(
+            f"{Fore.GREEN}Processed query: '{result['processed_query']}'{Style.RESET_ALL}"
+        )
+        print(f"{Fore.BLUE}Keywords: {result['keywords']}{Style.RESET_ALL}")
+        print(f"{Fore.MAGENTA}Type: {result['query_type']}{Style.RESET_ALL}")
         enhanced = processor.enhance_query_for_similarity(result)
-        print(f"Query melhorada: '{enhanced}'")
+        print(f"{Fore.CYAN}Enhanced query: '{enhanced}'{Style.RESET_ALL}")
         print("-" * 30)
 
 

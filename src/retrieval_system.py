@@ -5,6 +5,9 @@ from config import *
 from utils import load_json
 from query_processor import QueryProcessor
 from caching_system import EmbeddingCache
+from colorama import Fore, Style, init
+
+init(autoreset=True)
 
 
 class InformationRetrievalSystem:
@@ -19,20 +22,20 @@ class InformationRetrievalSystem:
     def load_model(self, model_path: str) -> None:
         try:
             self.model = SentenceTransformer(model_path)
-            print(f"Modelo carregado de: {model_path}")
+            print(f"{Fore.GREEN}Model loaded from: {model_path}{Style.RESET_ALL}")
         except:
-            print(f"Erro ao carregar modelo de: {model_path}")
-            print("A carregar modelo base...")
+            print(f"{Fore.RED}Error loading model from: {model_path}{Style.RESET_ALL}")
+            print(f"{Fore.YELLOW}Loading base model...{Style.RESET_ALL}")
             self.model = SentenceTransformer(BASE_MODEL)
 
     def load_collection(self, filepath: str = JSON_FILE) -> None:
         self.documents = load_json(filepath)
-        print(f"Carregados {len(self.documents)} documentos")
+        print(f"{Fore.GREEN}Loaded {len(self.documents)} documents{Style.RESET_ALL}")
 
         self._precompute_embeddings()
 
     def _precompute_embeddings(self) -> None:
-        print("A verificar cache de embeddings dos documentos...")
+        print(f"{Fore.CYAN}Checking document embedding cache...{Style.RESET_ALL}")
 
         model_name = self.model._modules["0"].auto_model.config.name_or_path
         abstracts = [doc["abstract"] for doc in self.documents]
@@ -40,15 +43,17 @@ class InformationRetrievalSystem:
         cached_embeddings = self.cache.batch_get_embeddings(abstracts, model_name)
 
         if len(cached_embeddings) == len(abstracts):
-            print(f"✅ Todos os {len(abstracts)} embeddings encontrados em cache!")
+            print(
+                f"{Fore.GREEN}✅ All {len(abstracts)} embeddings found in cache!{Style.RESET_ALL}"
+            )
             self.document_embeddings = np.array(
                 [cached_embeddings[abstract] for abstract in abstracts]
             )
         else:
             print(
-                f"📊 Cache: {len(cached_embeddings)}/{len(abstracts)} embeddings encontrados"
+                f"{Fore.BLUE}📊 Cache: {len(cached_embeddings)}/{len(abstracts)} embeddings found{Style.RESET_ALL}"
             )
-            print("A calcular embeddings em falta...")
+            print(f"{Fore.YELLOW}Computing missing embeddings...{Style.RESET_ALL}")
 
             uncached_abstracts = [
                 abstract for abstract in abstracts if abstract not in cached_embeddings
@@ -62,7 +67,7 @@ class InformationRetrievalSystem:
                 embedding_pairs = list(zip(uncached_abstracts, new_embeddings))
                 self.cache.batch_store_embeddings(embedding_pairs, model_name)
                 print(
-                    f"💾 {len(uncached_abstracts)} novos embeddings guardados em cache"
+                    f"{Fore.GREEN}💾 {len(uncached_abstracts)} new embeddings saved to cache{Style.RESET_ALL}"
                 )
 
             all_embeddings = []
@@ -78,17 +83,17 @@ class InformationRetrievalSystem:
 
         cache_stats = self.cache.get_cache_stats()
         print(
-            f"📈 Cache stats: {cache_stats['memory_cached_items']} em memória, {cache_stats['disk_cached_items']} em disco"
+            f"{Fore.BLUE}📈 Cache stats: {cache_stats['memory_cached_items']} in memory, {cache_stats['disk_cached_items']} on disk{Style.RESET_ALL}"
         )
-        print("Embeddings dos documentos prontos!")
+        print(f"{Fore.GREEN}Document embeddings ready!{Style.RESET_ALL}")
 
     def retrieve(
         self, query: str, top_k: int = 10
     ) -> List[Tuple[Dict[str, Any], float]]:
         if not self.documents or self.document_embeddings is None:
-            raise ValueError("Coleção não foi carregada")
+            raise ValueError("Collection not loaded")
 
-        print(f"A processar query: '{query}'")
+        print(f"{Fore.CYAN}Processing query: '{query}'{Style.RESET_ALL}")
 
         processed_query_data = self.query_processor.process_query(query)
 
@@ -98,20 +103,24 @@ class InformationRetrievalSystem:
 
         final_query = enhanced_query if enhanced_query.strip() else query
 
-        print(f"Query processada: '{processed_query_data['processed_query']}'")
-        print(f"Tipo de query: {processed_query_data['query_type']}")
+        print(
+            f"{Fore.YELLOW}Processed query: '{processed_query_data['processed_query']}'{Style.RESET_ALL}"
+        )
+        print(
+            f"{Fore.BLUE}Query type: {processed_query_data['query_type']}{Style.RESET_ALL}"
+        )
 
         model_name = self.model._modules["0"].auto_model.config.name_or_path
         cached_query_embedding = self.cache.get_embedding(final_query, model_name)
 
         if cached_query_embedding is not None:
-            print("🚀 Embedding da query encontrado em cache!")
+            print(f"{Fore.GREEN}🚀 Query embedding found in cache!{Style.RESET_ALL}")
             query_embedding = cached_query_embedding
         else:
-            print("🔄 A calcular embedding da query...")
+            print(f"{Fore.YELLOW}🔄 Computing query embedding...{Style.RESET_ALL}")
             query_embedding = self.model.encode([final_query], convert_to_numpy=True)[0]
             self.cache.store_embedding(final_query, model_name, query_embedding)
-            print("💾 Embedding da query guardado em cache")
+            print(f"{Fore.GREEN}💾 Query embedding saved to cache{Style.RESET_ALL}")
 
         similarities = self._calculate_similarities(query_embedding)
 
@@ -170,18 +179,22 @@ class InformationRetrievalSystem:
         results = self.retrieve(query, top_k)
 
         print(f"\n{'='*80}")
-        print(f"RESULTADOS PARA: '{query}'")
+        print(f"{Fore.MAGENTA}RESULTS FOR: '{query}'{Style.RESET_ALL}")
         print(f"{'='*80}")
 
         for i, (doc, score) in enumerate(results, 1):
-            print(f"\n{i}. SCORE: {score:.4f}")
-            print(f"TÍTULO: {doc['title']}")
-            print(f"AUTORES: {', '.join(doc.get('authors', []))}")
-            print(f"DATA: {doc.get('date', 'N/A')}")
-            print(f"ABSTRACT: {doc['abstract'][:300]}...")
+            print(f"\n{Fore.CYAN}{i}. SCORE: {score:.4f}{Style.RESET_ALL}")
+            print(f"{Fore.YELLOW}TITLE: {doc['title']}{Style.RESET_ALL}")
+            print(
+                f"{Fore.GREEN}AUTHORS: {', '.join(doc.get('authors', []))}{Style.RESET_ALL}"
+            )
+            print(f"{Fore.BLUE}DATE: {doc.get('date', 'N/A')}{Style.RESET_ALL}")
+            print(f"{Fore.WHITE}ABSTRACT: {doc['abstract'][:300]}...{Style.RESET_ALL}")
 
             if doc.get("keywords"):
-                print(f"PALAVRAS-CHAVE: {', '.join(doc['keywords'][:5])}")
+                print(
+                    f"{Fore.MAGENTA}KEYWORDS: {', '.join(doc['keywords'][:5])}{Style.RESET_ALL}"
+                )
 
             print("-" * 80)
 
@@ -190,7 +203,7 @@ class InformationRetrievalSystem:
 
     def clear_cache(self) -> None:
         self.cache.clear_cache()
-        print("Cache limpo!")
+        print(f"{Fore.GREEN}Cache cleared!{Style.RESET_ALL}")
 
 
 def main():
@@ -198,7 +211,9 @@ def main():
 
     ir_system.load_collection()
 
-    print(f"\nEstatísticas do cache: {ir_system.get_cache_stats()}")
+    print(
+        f"\n{Fore.BLUE}Cache statistics: {ir_system.get_cache_stats()}{Style.RESET_ALL}"
+    )
 
     test_queries = [
         "machine learning algorithms",
@@ -212,7 +227,9 @@ def main():
         ir_system.search_and_display(query, top_k=3)
         print("\n" + "=" * 100 + "\n")
 
-    print(f"\nEstatísticas finais do cache: {ir_system.get_cache_stats()}")
+    print(
+        f"\n{Fore.BLUE}Final cache statistics: {ir_system.get_cache_stats()}{Style.RESET_ALL}"
+    )
 
 
 if __name__ == "__main__":
