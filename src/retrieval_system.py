@@ -298,6 +298,18 @@ class InformationRetrievalSystem:
     def clear_cache(self) -> None:
         self.cache.clear_cache()
         print(f"{Fore.GREEN}Cache cleared!{Style.RESET_ALL}")
+        
+    def get_document_by_id(self, doc_id: str) -> Dict[str, Any]:
+        for doc in self.documents:
+            if doc.get("id") == doc_id:
+                return doc
+        return None
+
+    def get_document_index(self, doc_id: str) -> int:
+        for idx, doc in enumerate(self.documents):
+            if doc.get("id") == doc_id:
+                return idx
+        return -1
 
 
 def main():
