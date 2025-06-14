@@ -14,8 +14,8 @@
   - [Treino de Modelos](#-treino-de-modelos-model_trainerpy)
   - [Sistema de Cache](#-sistema-de-cache-caching_systempy)
   - [Sistema de Retrieval](#-sistema-de-retrieval-retrieval_systempy)
-  - [Validação de Dados](#-validação-de-dados-data_validatorpy)
-- [Configuração](#-configuração)
+  - [Validação de Dados](#️-validação-de-dados-data_validatorpy)
+- [Configuração](#️-configuração)
 - [Frontend Web Application](#-frontend-web-application)
 - [Contribuidores](#-contribuidores)
 
@@ -382,7 +382,7 @@ Verifica cache em batch para todos os abstracts, carrega instantaneamente se 100
 
 Pipeline completo que processa a query, aplica enhancement, verifica cache para embedding da query, calcula similaridades vectorizadas, aplica boost baseado em metadados e retorna resultados ordenados por relevância.
 
-#### Retrieval baseado em Documento
+#### **Retrieval baseado em Documento:**
 
 O sistema permite selecionar um documento específico e calcular os documentos mais similares ao mesmo. Utiliza o embedding do documento escolhido para calcular similaridades com todos os outros documentos, retornando os resultados ordenados por relevância. Esta funcionalidade é útil para explorar documentos relacionados ou encontrar conteúdos complementares.
 
