@@ -163,7 +163,7 @@ O sistema implementa um pipeline de limpeza em três fases principais:
 
 #### **Estruturação JSON:**
 
-O sistema produz documentos JSON estruturados com campos normalizados incluindo identificador único, título limpo, abstract processado, lista de autores, keywords extraídas, data normalizada, classificações UDC e FoS, e memberships de coleções.
+O sistema produz documentos JSON estruturados com campos normalizados incluindo identificador único, título limpo, abstract processado, lista de autores, keywords extraídas, data normalizada, classificações UDC, FoS, etc.
 
 ```json
 {
@@ -189,6 +189,8 @@ O sistema produz documentos JSON estruturados com campos normalizados incluindo 
   "collections": []
 }
 ```
+
+É importante referir que o ficheiro JSON completo nada mais é do que um array de objetos (Documentos), onde cada objeto segue a estrutura apresentada acima.
 
 ### 🧮 **Cálculo de Similaridades (similarity_calculator.py)**
 
