@@ -25,40 +25,6 @@ Este sistema implementa uma solução completa de Information Retrieval para o R
 - **Query Processing**: Normalização e enhancement automático de queries de pesquisa
 - **Similarity Multi-dimensional**: Combina TF-IDF, metadados e embeddings neurais de forma a obter melhores resultados
 
-## ✨ Funcionalidades
-
-### 🔄 **Pipeline Automatizado Completo**
-
-- Extração automática do RepositoriUM via protocolo OAI-PMH
-- Processamento e limpeza de dados XML para formato JSON estruturado
-- Validação rigorosa e remoção de duplicados
-- Cálculo otimizado de similaridades com clustering adaptativo
-- Fine-tuning de sentence transformers com dados específicos do domínio
-- Sistema de cache inteligente para embeddings
-- Interface de pesquisa interativa em tempo real
-
-### 🧠 **Inteligência Artificial**
-
-- **Sentence Transformers**: Embeddings contextuais de 384 dimensões otimizados para o domínio académico
-- **Clustering Adaptativo**: MiniBatch K-Means para eficiência computacional em grandes coleções
-- **Query Enhancement**: Processamento inteligente que melhora a qualidade das pesquisas
-- **Multi-modal Similarity**: Combinação ponderada de TF-IDF, metadados e embeddings neurais
-
-### ⚡ **Optimizações de Performance**
-
-- **Cache Híbrido**: Combinação de memória RAM e armazenamento persistente
-- **Vectorização NumPy**: Operações SIMD para cálculos matriciais eficientes
-- **Batch Processing**: Processamento em lotes para maximizar throughput
-- **Early Stopping**: Treino inteligente com validação automática para evitar overfitting
-- **Memory Management**: Gestão otimizada de memória para grandes coleções
-
-### 📊 **Sistema de Avaliação Robusto**
-
-- **Métricas Padrão**: Implementação de Precision@K, Recall@K, MAP e MRR
-- **Validação Automática**: Geração automática de test queries para avaliação
-- **Performance Monitoring**: Estatísticas detalhadas em tempo real
-- **Quality Assurance**: Validação multi-fase de dados para garantir qualidade
-
 ## 🚀 Instalação
 
 ### Instalação das Dependências
@@ -80,7 +46,7 @@ nltk.download('wordnet')
 "
 ```
 
-### Estrutura do Projeto
+## 📂 Estrutura do Projeto
 
 ```
 IRUM-SPLN/
@@ -440,15 +406,45 @@ Remove duplicados por ID exacto primeiro, depois duplicados por conteúdo utiliz
 **Fase 2 - Validação de Qualidade:**
 Verifica obrigatoriedade de títulos, valida tamanho de abstracts (mínimo 50, máximo 2000 caracteres), e remove documentos que não cumprem critérios de qualidade.
 
-## ⚙️ Configuração
+### ⚙️ Configuração
 
-### Parâmetros de Performance
+#### Parâmetros de Performance
 
 O sistema oferece configuração detalhada de parâmetros para clustering (sample ratio de 5%, clustering para coleções > 1000 docs), cache (1000 embeddings em memória, cache persistente ativo), TF-IDF (vocabulário de 5000 features, min_df=2, max_df=0.8) e extração (timeout de 45s, 3 retries, delay base de 1s).
 
-### Modelo e Treino
+#### Modelo e Treino
 
 Configuração do modelo base all-MiniLM-L6-v2, 2 épocas de treino, batch size de 32, threshold de similaridade de 0.2 para pairs de treino, e validação de abstracts entre 50-2000 caracteres.
+
+## 🌐 Frontend Web Application
+
+Embora o foco principal deste projeto tenha sido o backend, também foi desenvolvido um frontend web application que permite testar todas as funcionalidades do sistema de Information Retrieval de forma interativa e intuitiva. A aplicação foi construída utilizando Vue.js.
+
+### Páginas da Web Application
+
+#### Home Page
+
+A página inicial apresenta uma introdução ao sistema e permite navegar para as diferentes funcionalidades. É o ponto de partida para explorar o sistema.
+
+![Home Page](public/home_page.png)
+
+#### Search Page
+
+Nesta página, o utilizador pode inserir uma query de pesquisa para encontrar os documentos mais relevantes. Os resultados são apresentados com base na similaridade query-documentos.
+
+![Search Page](public/search_page.png)
+
+#### Browse Page
+
+A página de navegação permite explorar todos os documentos disponíveis no sistema. É possível visualizar os títulos, autores, palavras-chave e outros metadados dos documentos.
+
+![Browse Page](public/browse_page.png)
+
+#### Document Page
+
+Ao clicar num documento na **Home Page**, **Search Page** ou **Browse Page**, o utilizador é redirecionado para a página do documento. Esta página apresenta os detalhes completos do mesmo, incluindo título, autores, palavras-chave, resumo e outros metadados. Além disso, oferece a funcionalidade de calcular os documentos mais similares ao documento selecionado, permitindo explorar a funcionalidade de similaridade documento-documentos.
+
+![Document Page](public/document_page.png)
 
 ## 👥 Contribuidores
 
