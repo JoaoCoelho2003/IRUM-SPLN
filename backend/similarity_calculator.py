@@ -55,7 +55,7 @@ class SimilarityCalculator:
         )
 
         kmeans = MiniBatchKMeans(
-            n_clusters=self.n_clusters, random_state=42, batch_size=1000
+            n_clusters=self.n_clusters, random_state=2025, batch_size=1000
         )
         cluster_labels = kmeans.fit_predict(self.document_vectors)
 
