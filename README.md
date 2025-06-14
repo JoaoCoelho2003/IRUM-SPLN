@@ -167,31 +167,26 @@ O sistema produz documentos JSON estruturados com campos normalizados incluindo 
 
 ```json
 {
-    "id": "oai:repositorium.sdum.uminho.pt:1822/86805",
-    "title": "On the performance of WebAssembly",
-    "abstract": "The worldwide Web has dramatically evolved in recent years (...) Our benchmarking framework isalso available to allow further research and replication.",
-    "authors": [
-      "Macedo, João Gonçalves de"
-    ],
-    "keywords": [
-      "Energy efficiency",
-      "Green software",
-      "Web browsers",
-      "WebAssembly",
-      "Eficiência energética",
-      "Navegadores web",
-      "Software Verde",
-      "Engenharia e Tecnologia::Engenharia Eletrotécnica, Eletrónica e Informática"
-    ],
-    "date": "2022",
-    "type": "info:eu-repo/semantics/masterThesis",
-    "language": "eng",
-    "subjects_udc": [],
-    "subjects_fos": [
-      "Engenharia e Tecnologia::Engenharia Eletrotécnica, Eletrónica e Informática"
-    ],
-    "collections": []
-  },
+  "id": "oai:repositorium.sdum.uminho.pt:1822/81336",
+  "uri": "https://hdl.handle.net/1822/81336",
+  "title": "Plataforma de agendamento em ambiente hospitalar",
+  "abstract": "Desde a sua génese, os Sistemas de Informação Hospitalar (SIH) tem proporcionado um conjunto de métodos (...) e da introdução de novas funcionalidades.",
+  "authors": ["Chaves, António Jorge Monteiro"],
+  "keywords": [
+    "Agendamento",
+    "Desenvolvimento Full Stack",
+    "Interoperabilidade",
+    "Engenharia e Tecnologia::Engenharia Eletrotécnica, Eletrónica e Informática"
+  ],
+  "date": "2021",
+  "type": "info:eu-repo/semantics/masterThesis",
+  "language": "por",
+  "subjects_udc": [],
+  "subjects_fos": [
+    "Engenharia e Tecnologia::Engenharia Eletrotécnica, Eletrónica e Informática"
+  ],
+  "collections": []
+}
 ```
 
 ### 🧮 **Cálculo de Similaridades (similarity_calculator.py)**

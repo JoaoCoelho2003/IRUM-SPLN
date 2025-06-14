@@ -59,6 +59,7 @@ class DocumentProcessor:
 
             doc = {
                 "id": self._extract_identifier(record),
+                "uri": self._extract_field(metadata, "identifier", "uri"),
                 "title": self._extract_field(metadata, "title"),
                 "abstract": self._extract_field(metadata, "description", "abstract"),
                 "authors": self._extract_multiple_fields(
