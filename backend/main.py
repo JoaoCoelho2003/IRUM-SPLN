@@ -257,7 +257,7 @@ def interactive_search(ir_system):
     while True:
         print(f"\n{Fore.MAGENTA}SEARCH OPTIONS:{Style.RESET_ALL}")
         print(f"{Fore.YELLOW}1. Search by query{Style.RESET_ALL}")
-        print(f"{Fore.YELLOW}2. Find similar documents to a document{Style.RESET_ALL}")
+        print(f"{Fore.YELLOW}2. Find similar documents based on a selected reference document{Style.RESET_ALL}")
         print(f"{Fore.YELLOW}3. Exit{Style.RESET_ALL}")
         
         choice = input(f"\n{Fore.CYAN}Enter your choice (1-3): {Style.RESET_ALL}").strip()
