@@ -189,6 +189,10 @@
                     <h3 class="text-sm font-medium text-gray-400">Language</h3>
                     <p class="text-gray-200">{{ document.language || 'Not specified' }}</p>
                   </div>
+                  <div v-if="document.grade">
+                    <h3 class="text-sm font-medium text-gray-400">Grade</h3>
+                    <p class="text-gray-200">{{ document.grade.replace(' valores', '') }}</p>
+                  </div>
                   <div>
                     <h3 class="text-sm font-medium text-gray-400">URI</h3>
                     <a

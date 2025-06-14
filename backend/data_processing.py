@@ -75,6 +75,7 @@ class DocumentProcessor:
                 "subjects_fos": self._extract_multiple_fields(
                     metadata, "subject", "fos"
                 ),
+                "grade": self._extract_field(metadata, "degree", "grade"),
                 "collections": collection_values,
             }
 
