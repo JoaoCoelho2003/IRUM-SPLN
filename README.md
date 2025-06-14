@@ -31,8 +31,8 @@ Este sistema implementa uma solução completa de Information Retrieval para o R
 
 ```bash
 # Clona o repositório
-git clone https://github.com/username/ir-repositorium.git
-cd ir-repositorium
+git clone https://github.com/JoaoCoelho2003/IRUM-SPLN
+cd IRUM-SPLN
 
 # Instala dependências
 pip install -r requirements.txt
