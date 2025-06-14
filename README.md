@@ -3,17 +3,21 @@
 ## 📋 Índice
 
 - [Visão Geral](#-visão-geral)
-- [Funcionalidades](#-funcionalidades)
 - [Instalação](#-instalação)
+- [Estrutura do Projeto](#-estrutura-do-projeto)
 - [Utilização](#-utilização)
-- [Arquitectura](#-arquitectura)
-- [Componentes Técnicos](#-componentes-técnicos-detalhados)
-- [Pipeline Completo](#-pipeline-completo)
-- [Configuração](#-configuração-avançada)
-- [Performance](#-performance-e-optimizações)
-- [Exemplos](#-exemplos-de-uso)
-- [Troubleshooting](#-troubleshooting)
-- [Roadmap](#-roadmap-e-melhorias-futuras)
+- [Componentes Técnicos](#-componentes-técnicos)
+  - [Extração de Dados](#-extração-de-dados-data_extractionpy)
+  - [Processamento de Dados](#-processamento-de-dados-data_processingpy)
+  - [Cálculo de Similaridades](#-cálculo-de-similaridades-similarity_calculatorpy)
+  - [Processamento de Queries](#-processamento-de-queries-query_processorpy)
+  - [Treino de Modelos](#-treino-de-modelos-model_trainerpy)
+  - [Sistema de Cache](#-sistema-de-cache-caching_systempy)
+  - [Sistema de Retrieval](#-sistema-de-retrieval-retrieval_systempy)
+  - [Validação de Dados](#-validação-de-dados-data_validatorpy)
+- [Configuração](#-configuração)
+- [Frontend Web Application](#-frontend-web-application)
+- [Contribuidores](#-contribuidores)
 
 ## 🎯 Visão Geral
 
