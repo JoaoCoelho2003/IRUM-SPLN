@@ -189,6 +189,17 @@
                     <h3 class="text-sm font-medium text-gray-400">Language</h3>
                     <p class="text-gray-200">{{ document.language || 'Not specified' }}</p>
                   </div>
+                  <div>
+                    <h3 class="text-sm font-medium text-gray-400">URI</h3>
+                    <a
+                      :href="document.uri"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-blue-400 hover:underline"
+                    >
+                      {{ document.uri }}
+                    </a>
+                  </div>
                 </div>
               </div>
 
@@ -426,7 +437,6 @@ import { api } from '../services/api'
 const route = useRoute()
 const router = useRouter()
 
-// Get the document ID from the route params
 const docId = decodeURIComponent(route.params.id)
 
 const document = ref(null)
