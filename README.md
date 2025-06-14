@@ -185,6 +185,7 @@ O sistema produz documentos JSON estruturados com campos normalizados incluindo 
   "subjects_fos": [
     "Engenharia e Tecnologia::Engenharia Eletrotécnica, Eletrónica e Informática"
   ],
+  "grade": "18 valores",
   "collections": []
 }
 ```
