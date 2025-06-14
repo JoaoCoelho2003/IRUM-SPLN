@@ -223,7 +223,7 @@ def search_by_document(ir_system, monitor):
         print(f"{'='*80}")
         
         for i, (doc, score) in enumerate(results, 1):
-            doc_idx = ir_system.documents.index(doc)  # Find the document's index in the collection
+            doc_idx = ir_system.documents.index(doc)
             print(f"\n{Fore.CYAN}{i}. [{doc_idx}] SCORE: {score:.4f}{Style.RESET_ALL}")
             print(f"{Fore.YELLOW}TITLE: {doc['title']}{Style.RESET_ALL}")
             print(f"{Fore.GREEN}AUTHORS: {', '.join(doc.get('authors', []))}{Style.RESET_ALL}")
